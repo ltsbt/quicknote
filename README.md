@@ -1,2 +1,3 @@
 # obsidian-quicknote
-Create notes without opening the Obsidian app 
+
+Create notes without opening the Obsidian app
