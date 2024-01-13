@@ -1,42 +1,70 @@
 <script lang="ts">
     import { invoke } from '@tauri-apps/api/tauri';
-    import { dialog } from '@tauri-apps/api';
+    import { Settings } from 'lucide-svelte';
+    import { appWindow } from '@tauri-apps/api/window';
 
-    let folderPath = '';
     let noteTitle = '';
     let noteText = '';
 
     function createNote() {
-        if (folderPath === '') return;
         if (noteTitle === '') return;
         if (noteText === '') return;
 
-        invoke('create_note', {
-            vaultPath: folderPath,
-            noteTitle: noteTitle,
-            noteContent: noteText,
-        });
+        // invoke('create_note', {
+        //     noteTitle: noteTitle,
+        //     noteContent: noteText,
+        // });
 
         noteTitle = '';
         noteText = '';
+
+        appWindow.hide();
     }
 
-    async function selectFolder() {
-        try {
-            const selected = await dialog.open({ directory: true, multiple: false });
-            if (Array.isArray(selected)) return;
-            if (selected === null) return;
-            folderPath = selected;
-        } catch (error: any) {
-            window.alert(error);
-        }
-    }
+    function openSettings() {}
 </script>
 
 <main class="overflow-x-hidden flex flex-col items-center justify-center">
-    <h1 class="text-4xl m-4">New Note:</h1>
-    <button on:click={selectFolder} class="font-bold py-2 px-4 rounded">Choose Note Folder</button>
-    <input bind:value={noteTitle} class="w-full my-4 p-2" placeholder="Note title" />
-    <textarea bind:value={noteText} class="w-full h-32 p-2" placeholder="Note content" />
-    <button on:click={createNote} class="font-bold my-4 py-2 px-4 rounded">Create Note</button>
+    <button on:click={openSettings} class="absolute top-0 right-0 m-4 rounded">
+        <Settings size="20" />
+    </button>
+
+    <div class="w-11/12 mt-10">
+        <input bind:value={noteTitle} class="font-semibold text-xl w-full my-4 p-2" placeholder="Note title" />
+        <textarea bind:value={noteText} class="font-normal w-full p-2" placeholder="Type your note here..." />
+    </div>
+
+    <button on:click={createNote} class="absolute bottom-0 my-4 px-8 py-2 rounded">Create Note (Ctrl/Cmd + S)</button>
 </main>
+
+<style>
+    input,
+    textarea {
+        border-radius: 0.25rem;
+        background-color: #1e1e1e;
+        outline: none;
+        resize: none;
+        transition: all 0.2s ease-in-out;
+    }
+
+    textarea {
+        height: 70vh;
+    }
+
+    input::selection,
+    textarea::selection {
+        background-color: #382d53;
+    }
+
+    button {
+        transition: all 0.2s ease-in-out;
+    }
+
+    input:focus,
+    textarea:focus,
+    input:hover,
+    textarea:hover,
+    button:hover {
+        background-color: #2e2e2e;
+    }
+</style>

@@ -1,13 +1,12 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
-use std::fs;
 #[cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+use std::fs;
 use tauri::{
     CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
 };
 
 #[tauri::command]
 fn create_note(vault_path: String, note_title: String, note_content: String) {
-    println!("Function called: create_note");
     let file_name = format!("{}/{}.md", vault_path, note_title.replace(" ", "_"));
     fs::write(file_name.clone(), note_content).expect("Unable to write file");
     println!("Note created: {}", file_name.clone().to_string());
@@ -36,7 +35,7 @@ fn main() {
                 api.prevent_close();
             }
             tauri::WindowEvent::Focused(focused) => {
-                if !*focused {
+                if !focused {
                     event.window().hide().unwrap();
                 }
             }

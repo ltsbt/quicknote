@@ -21,6 +21,10 @@
             },
             "dialog": {
                 "all": true
+            },
+            "window": {
+                "hide": true,
+                "show": true
             }
         },
         "bundle": {
@@ -40,13 +44,26 @@
         },
         "windows": [
             {
+                "title": "QuickNote",
+                "width": 650,
+                "height": 700,
                 "fullscreen": false,
                 "resizable": false,
-                "title": "obsidian-quicknote",
+                "decorations": false,
+                "center": true,
+                "visible": false
+            },
+            {
+                "title": "Settings",
+                "label": "settings",
+                "url": "settings.html",
                 "width": 600,
                 "height": 400,
+                "resizable": false,
+                "fullscreen": false,
                 "decorations": false,
-                "center": true
+                "center": true,
+                "visible": false
             }
         ],
         "systemTray": {
