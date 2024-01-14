@@ -6,8 +6,8 @@
         "distDir": "../dist"
     },
     "package": {
-        "productName": ".",
-        "version": "0.0.0"
+        "productName": "obsidian-quicknote",
+        "version": "../package.json"
     },
     "tauri": {
         "allowlist": {
@@ -23,14 +23,13 @@
                 "all": true
             },
             "window": {
-                "hide": true,
-                "show": true
+                "all": true
             }
         },
         "bundle": {
             "active": true,
             "targets": "all",
-            "identifier": "com.tauri.dev",
+            "identifier": "com.ltsbt.quicknote",
             "icon": [
                 "icons/32x32.png",
                 "icons/128x128.png",
@@ -51,19 +50,8 @@
                 "resizable": false,
                 "decorations": false,
                 "center": true,
-                "visible": false
-            },
-            {
-                "title": "Settings",
-                "label": "settings",
-                "url": "settings.html",
-                "width": 600,
-                "height": 400,
-                "resizable": false,
-                "fullscreen": false,
-                "decorations": false,
-                "center": true,
-                "visible": false
+                "visible": false,
+                "skipTaskbar": true
             }
         ],
         "systemTray": {

@@ -1,13 +1,14 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
-#[cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 use std::fs;
 use tauri::{
-    CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
+    api::shell, CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu,
+    SystemTrayMenuItem,
 };
 
 #[tauri::command]
-fn create_note(vault_path: String, note_title: String, note_content: String) {
-    let file_name = format!("{}/{}.md", vault_path, note_title.replace(" ", "_"));
+fn create_note(folder_path: String, note_title: String, note_content: String) {
+    let file_name = format!("{}/{}.md", folder_path, note_title.replace(" ", "_"));
     fs::write(file_name.clone(), note_content).expect("Unable to write file");
     println!("Note created: {}", file_name.clone().to_string());
 }
@@ -34,11 +35,6 @@ fn main() {
                 event.window().hide().unwrap();
                 api.prevent_close();
             }
-            tauri::WindowEvent::Focused(focused) => {
-                if !focused {
-                    event.window().hide().unwrap();
-                }
-            }
             _ => {}
         })
         .system_tray(system_tray)
@@ -49,20 +45,25 @@ fn main() {
                 ..
             } => {
                 let window = app.get_window("main").unwrap();
-                window.show().unwrap();
-                window.set_focus().unwrap();
+                window.emit("open_main", ()).unwrap();
             }
             SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
                 "new_note" => {
                     let window = app.get_window("main").unwrap();
-                    window.show().unwrap();
-                    window.set_focus().unwrap();
+                    window.emit("new_note", ()).unwrap();
                 }
                 "settings" => {
-                    let window = app.get_window("settings").unwrap();
-                    window.hide().unwrap();
+                    let window = app.get_window("main").unwrap();
+                    window.emit("open_settings", ()).unwrap();
                 }
-                "about" => {}
+                "about" => {
+                    // open browser to github page
+                    let _ = shell::open(
+                        &app.shell_scope(),
+                        "https://github.com/ltsbt/obsidian-quicknote",
+                        None,
+                    );
+                }
                 "quit" => {
                     app.exit(0);
                 }
