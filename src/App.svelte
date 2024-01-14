@@ -1,6 +1,6 @@
 <script lang="ts">
     import { invoke } from '@tauri-apps/api/tauri';
-    import { appWindow, PhysicalPosition, WebviewWindow } from '@tauri-apps/api/window';
+    import { appWindow, WebviewWindow } from '@tauri-apps/api/window';
     import { listen } from '@tauri-apps/api/event';
 
     import { onMount } from 'svelte';
@@ -68,13 +68,7 @@
 
         moveButton.addEventListener('mousedown', () => {
             isDragging = true;
-            window.addEventListener('mousemove', async (e) => {
-                if (!isDragging) return;
-                // cannot use appWindow.startDragging() because it doesn't register mouseup event
-                const pos = await appWindow.outerPosition();
-                const newPos = new PhysicalPosition(pos.x + e.movementX, pos.y + e.movementY);
-                appWindow.setPosition(newPos);
-            });
+            appWindow.startDragging();
         });
 
         window.addEventListener('mouseup', () => {
