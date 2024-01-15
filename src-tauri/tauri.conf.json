@@ -16,8 +16,16 @@
                 "all": false,
                 "open": true
             },
+            "path": {
+                "all": true
+            },
             "fs": {
-                "writeFile": true
+                "all": false,
+                "readDir": true,
+                "createDir": true,
+                "readFile": true,
+                "writeFile": true,
+                "scope": ["$APPCONFIG/**/*"]
             },
             "dialog": {
                 "all": true
@@ -47,7 +55,7 @@
                 "width": 650,
                 "height": 700,
                 "fullscreen": false,
-                "resizable": false,
+                "resizable": true,
                 "decorations": false,
                 "center": true,
                 "visible": false,

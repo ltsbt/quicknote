@@ -14,7 +14,7 @@
 
     // Variables for whether to hide window when it loses focus
     let isSettingsOpen = false;
-    let isDragging = false;
+    let isMouseEvent = false;
     let keepWindowShown = false;
 
     let settingsWindow: WebviewWindow;
@@ -28,6 +28,8 @@
     onMount(async () => {
         /**************************************************************************
          *                  LISTENERS
+         *  There is no need to unlisten to these events because
+         *  the app will close when the main window is closed.
          **************************************************************************/
 
         listen('open_main', async () => {
@@ -61,18 +63,26 @@
         });
 
         appWindow.onFocusChanged(({ payload: focused }) => {
-            if (!focused && !isSettingsOpen && !keepWindowShown && !isDragging) {
+            if (!focused && !isSettingsOpen && !keepWindowShown && !isMouseEvent) {
                 appWindow.hide();
             }
         });
 
         moveButton.addEventListener('mousedown', () => {
-            isDragging = true;
+            isMouseEvent = true;
             appWindow.startDragging();
         });
 
+        window.addEventListener('resize', () => {
+            isMouseEvent = true;
+        });
+
+        window.addEventListener('mousedown', () => {
+            isMouseEvent = true;
+        });
+
         window.addEventListener('mouseup', () => {
-            isDragging = false;
+            isMouseEvent = false;
         });
     });
 
@@ -93,7 +103,7 @@
 
         // create settings window
         settingsWindow = new WebviewWindow('settings', {
-            title: 'Settings',
+            title: 'Quick Note Settings',
             url: '/settingsPage.html',
             center: true,
             width: 600,
@@ -112,53 +122,63 @@
     }
 </script>
 
-<main class="overflow-x-hidden flex flex-col items-center justify-center">
+<main class="overflow-x-hidden h-screen flex flex-col items-center justify-center p-4">
     {#if keepWindowShown}
         <button on:click={() => appWindow.minimize()} class="absolute top-0 right-20 m-2 p-2 rounded">
-            <Minus size="20" />
+            <Minus color="#b3b3b3" size="20" />
         </button>
     {/if}
     <button bind:this={moveButton} class="absolute top-0 right-10 m-2 p-2 rounded">
-        <Move size="20" />
+        <Move color="#b3b3b3" size="20" />
     </button>
     <button on:click={openSettings} class="absolute top-0 right-0 m-2 p-2 rounded">
-        <Gear size="20" />
+        <Gear color="#b3b3b3" size="20" />
     </button>
-    <label class="select-none absolute top-0 left-0 mx-8 mt-4">
-        <input type="checkbox" bind:checked={keepWindowShown} />
+    <label class="settings-color select-none absolute top-0 left-0 m-4">
+        <input type="checkbox" class="mx-1" bind:checked={keepWindowShown} />
         Keep window on top
     </label>
 
-    <div class="w-11/12 mt-10">
-        <input bind:value={noteTitle} class="font-semibold text-xl w-full my-4 p-2" placeholder="Note title" />
+    <div class="w-full h-full mt-5 flex flex-col justify-start items-start">
+        <input bind:value={noteTitle} class="font-semibold text-xl w-full mt-4 px-3 py-2" placeholder="Note title" />
+        <hr />
         <textarea
             bind:this={textArea}
             bind:value={noteText}
-            class=" font-normal w-full p-2"
+            class=" font-normal w-full h-full px-3 py-2 mb-12"
             placeholder="Type your note here..."
         />
     </div>
 
-    <div class="select-none absolute bottom-0 my-4 w-11/12 flex justify-between">
-        <button on:click={clearNote} class="px-8 py-1 rounded"> Clear Note </button>
-        <button on:click={createNote} class=" px-8 py-1 rounded">
+    <div class="select-none absolute bottom-0 px-4 my-3 w-full flex justify-between">
+        <button on:click={clearNote} class="note-button"> Clear Note </button>
+        <button on:click={createNote} class="note-button">
             Create Note ( {navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + S )
         </button>
     </div>
 </main>
 
-<style>
+<style lang="postcss">
     input,
     textarea {
-        border-radius: 0.25rem;
-        background-color: #1e1e1e;
+        @apply rounded-md;
+        @apply shadow-sm shadow-gray-950;
+        background-color: #2a2a2a;
         outline: none;
         resize: none;
         transition: all 0.2s ease-in-out;
     }
 
-    textarea {
-        height: 75vh;
+    .note-button {
+        @apply flex flex-row justify-center items-center;
+        @apply shadow-sm shadow-gray-950;
+        @apply select-none resize-none rounded-md px-8 h-7 py-1 my-2 text-sm;
+        background-color: #2a2a2a;
+        color: #b3b3b3;
+    }
+
+    .settings-color {
+        color: #b3b3b3;
     }
 
     input::selection,
@@ -168,6 +188,7 @@
 
     button {
         transition: all 0.2s ease-in-out;
+        color: #dadada;
     }
 
     input:focus,
@@ -176,5 +197,10 @@
     textarea:hover,
     button:hover {
         background-color: #2e2e2e;
+    }
+
+    hr {
+        @apply w-full my-3;
+        border-top: 1px solid #363636;
     }
 </style>
