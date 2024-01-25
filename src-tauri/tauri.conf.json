@@ -6,7 +6,7 @@
         "distDir": "../dist"
     },
     "package": {
-        "productName": "obsidian-quicknote",
+        "productName": "quicknote",
         "version": "../package.json"
     },
     "tauri": {
@@ -51,7 +51,7 @@
         },
         "windows": [
             {
-                "title": "QuickNote",
+                "title": "Quick Note",
                 "width": 650,
                 "height": 700,
                 "fullscreen": false,

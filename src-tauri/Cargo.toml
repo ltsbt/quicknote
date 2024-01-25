@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Create notes without opening Obsidian"
 authors = ["ltsbt"]
 license = "MIT"
-repository = "htps://github.com/ltsbt/obsidian-quicknote"
+repository = "htps://github.com/ltsbt/quicknote"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
